@@ -1,2 +1,2 @@
 # webim-demo
-https://www.starrtc.com/demo/im/
+在线效果演示： https://www.starrtc.com/demo/im/
