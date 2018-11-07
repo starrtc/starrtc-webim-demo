@@ -1,5 +1,24 @@
 ﻿<!DOCTYPE html>
 <html mip>
+
+<!--
+author:support@starRTC.com
+聊天室:先获取聊天室列表填充到 roomList 元素中，当点击某个聊天室时，调用 joinChatRoom 方法，在里面调sdk的 sigConnect 连接聊天室
+连接成功会收到 case "joinChatRoom":的回调
+
+在聊天室里面，点发送按钮或回车，会调用 sendChatMsg 方法，最终调用sdk的 sendChatMsg 方法发送消息
+
+调用 getRoomOnlineNum 或取聊天室在线人数，在回调 getRoomOnlineNum 里面获取结果, 可以定时，比如5s调用一次
+
+
+
+
+
+
+
+
+
+-->
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>StarRTC IM Demo</title>
@@ -100,7 +119,7 @@
 	</center>	
 	
 	
-	<center>Copyleft &copy; <a href='https://docs.starrtc.com/download/'>starRTC.com</a></center>
+	<center>Copyright &copy; <a href='https://docs.starrtc.com/download/'>starRTC.com</a></center>
 	</div>
 	
     <div class="bottom" id="logs" ></div>
@@ -315,8 +334,17 @@
             alert("请输入点什么");
             return;
         }
-        setChatMessageInnerHTML(userId+":<br/>&nbsp;&nbsp;&nbsp;"+message);		
+		var time = new Date();
+        var timestr =   ("0" + time.getHours()).slice(-2)   + ":" + 
+						("0" + time.getMinutes()).slice(-2) + ":" + 
+						("0" + time.getSeconds()).slice(-2);
+	
+        setChatMessageInnerHTML(userId+"("+timestr+"):<br/>&nbsp;&nbsp;&nbsp;"+message);		
 		starChatSDK.sendChatMsg(message);
+		
+		//ray
+		starChatSDK.getRoomOnlineNum();
+		
 		//清空输入框
 		//message = "";
 		$("#chatRoomText").val('');
@@ -389,6 +417,8 @@
             case "connect failed":
             case "connect closed":	
 				//连接失败
+				alert('连接断开，正在重连中...');
+				starChatSDK.sigConnect();
                 break;
 			case "onChatRoomMessage":
 			{
@@ -408,6 +438,11 @@
 						//data.status == "success"为成功
 						alert('聊天室加入成功，可以发消息了');						
 						//starChatSDK.sendChatMsg('web chat');						
+						break;
+					case "getRoomOnlineNum":
+						//alert(data.onlineNum);					
+						//alert(data.userData.roomInfo.Name);	
+						showRoomOnlineNum(data.userData.roomInfo.Name, data.onlineNum);							
 						break;
 					case "recvChatPrivateMsg":
 					//收到聊天室私聊消息
@@ -431,7 +466,12 @@
 						var message = data.msg.contentData;
 						var fromId = data.msg.fromId;
 						//var fromId = data.fromUserId;
-						setChatMessageInnerHTML(fromId+":<br/>&nbsp;&nbsp;&nbsp;"+message);	
+						var time = new Date();
+						var timestr =   ("0" + time.getHours()).slice(-2)   + ":" + 
+						("0" + time.getMinutes()).slice(-2) + ":" + 
+						("0" + time.getSeconds()).slice(-2);
+						
+						setChatMessageInnerHTML(fromId+"("+timestr+"):<br/>&nbsp;&nbsp;&nbsp;"+message);	
 					break;
 					
 				}
@@ -465,8 +505,12 @@
 		starChatSDK.login(agentId, userId, authKey);
 		starChatSDK.sigConnect();
 		
-		
     }
+	
+	function showRoomOnlineNum(roomName, onlineNum){
+		var div = document.getElementById('targetChatRoomId')		
+        div.innerHTML = chatRoomName + "(" + onlineNum + "人在线)";//填充	
+	}
 
     //打开群组聊天界面
     function openGroup(index){
