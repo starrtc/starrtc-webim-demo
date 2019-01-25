@@ -56,7 +56,7 @@ author:support@starRTC.com
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
                 <input id="targetUserId" type="text" style="width: 100%;height: 100%;background: whitesmoke;padding: 0;border-width: 0;text-align: center"  placeholder="点击这里 输入对方ID">
             </div>
-            <div id="sigleMessage" style="position: absolute; top: 50px; left: 0; right: 0px; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
+            <div id="sigleMessage" class="content-menu" style="position: absolute; top: 50px; left: 0; right: 0px; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
             </div>
             <!-- <div id="video" style="position: absolute; width: 200px ;top: 50px; right: 0; bottom: 50px; background-color: darkgrey; overflow: hidden;text-align: center">
                  <br/>视频区<br/>
@@ -65,7 +65,7 @@ author:support@starRTC.com
             </div>-->
             <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background-color: white;">
                 <div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
-                    <input id="sigleText" type="text" style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
+                    <input id="sigleText" type="text" onkeydown="singlechatkeydown()" style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
                 </div>
                 <div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  " onclick="sendSingleChat()">发送</div>
             </div>
@@ -166,7 +166,7 @@ author:support@starRTC.com
 
     //showSingle();
 	showChatRoom();
-    var agentId = "BjR6QV3vUJ4d";
+    var agentId = "stargWeHN8Y7";
     var userId = "";
     var authKey = "";
 	var starChatSDK = "";
@@ -229,7 +229,7 @@ author:support@starRTC.com
     }else{
         userId = ""+(Math.floor(Math.random()*900000+100000));
         setCookie("starrtc_userId", userId, null);
-        $.get("https://api.starrtc.com/demo/authKey?userid="+userId, function (data,status) {
+        $.get("https://api.starrtc.com/public/authKey?userid="+userId+"&appid="+agentId, function (data,status) {
             traceLog("authKey 返回："+status+"||"+data);
             if(status === "success"){
                 var obj = JSON.parse(data);
@@ -252,7 +252,7 @@ author:support@starRTC.com
     var groupList;
     var selectGroupIndex;
 	//获取聊天室列表
-    $.get("https://api.starrtc.com/demo/chat/list.php",function (data,status) {
+    $.get("https://api.starrtc.com/public/chat/list.php?appid="+agentId,function (data,status) {
         traceLog("chatList 返回："+status+"||"+data);
         if(status === "success"){
             var obj = JSON.parse(data);
@@ -272,7 +272,7 @@ author:support@starRTC.com
     });
 
     //获取群组列表
-    $.get("https://api.starrtc.com/demo/group/list_all.php"+"?userid="+userId,function (data,status) {
+    $.get("https://api.starrtc.com/public/group/list_all.php"+"?userid="+userId+"&appid="+agentId,function (data,status) {
         traceLog("groupList 返回："+status+"||"+data);
         if(status === "success"){
             var obj = JSON.parse(data);
@@ -307,6 +307,9 @@ author:support@starRTC.com
         }
         setSingleMessageInnerHTML(userId+":<br/>&nbsp;&nbsp;&nbsp;"+message);
         StarRtc.Instance.sendSingleMsg(targetUid, "新消息", message);
+		
+		//清空输入框		
+		$("#sigleText").val('');
     }
     //发送群聊消息
     function sendGroupChat() {
@@ -327,6 +330,13 @@ author:support@starRTC.com
 			
 		}	
 	}
+	function singlechatkeydown(){
+		if(event.keyCode == 13){ //按下回车键
+			sendSingleChat();
+			
+		}	
+	}
+	
 	//发送聊天室消息
     function sendChatMsg() {
         var message   = document.getElementById('chatRoomText').value;
@@ -564,6 +574,10 @@ author:support@starRTC.com
                 //console.log("点击了：" + key);
 				var div = document.getElementById('chatRoomMessage')
 				div.innerHTML = '';
+				
+				var div = document.getElementById('sigleMessage')
+				div.innerHTML = '';
+				
 				//div.scrollTop = div.scrollHeight;
              },
              items: {
