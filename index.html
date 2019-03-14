@@ -115,11 +115,11 @@ author:support@starRTC.com
 	<center>安卓和iOS程序也可以和这个页面互发消息：
 	<a id = "continue" onMouseOut="hideAndroidQr()" onmouseover="showAndroidQr()" class="a_pay">下载安卓版</a>
 	<a id = "continue" onMouseOut="hideiOSQr()" onmouseover="showiOSQr()" class="a_pay">下载iOS版</a>&nbsp;&nbsp;
-	<a href='https://www.starrtc.com/demo/h5/' target="_blank">网页视频聊天</a>
+	<a href='https://www.starrtc.com/demo/web/' target="_blank">网页视频聊天</a>
 	</center>	
 	
 	
-	<center>Copyright &copy; <a href='https://docs.starrtc.com/download/'>starRTC.com</a></center>
+	<center>Copyright &copy; <a href='https://docs.starrtc.com/en/download/'>starRTC.com</a></center>
 	</div>
 	
     <div class="bottom" id="logs" ></div>
@@ -169,7 +169,7 @@ author:support@starRTC.com
     var agentId = "stargWeHN8Y7";
     var userId = "";
     var authKey = "";
-	var starChatSDK = "";
+	var starChatSDK = null;
 
     var callBack = function (data, status) {
         traceLog(data+"||"+status);
@@ -418,17 +418,21 @@ author:support@starRTC.com
     }
 
 	var chatInnerCallback = function (data, status) {
+		var thisRoom = data.obj;
         switch (status){
 			case "connect success":
 				//alert('starChatSDK connect success');
-				starChatSDK.joinRoom();
+				thisRoom.joinRoom();
 				
 				break;
             case "connect failed":
             case "connect closed":	
 				//连接失败
-				alert('连接断开，正在重连中...');
-				starChatSDK.sigConnect();
+				if(!thisRoom.activeDisconnect())
+				{
+					alert('连接断开，正在重连中...');
+					thisRoom.sigConnect();
+				}
                 break;
 			case "onChatRoomMessage":
 			{
@@ -510,6 +514,13 @@ author:support@starRTC.com
 		var starChatSDKUserData = {
             "roomInfo":innerChatRoomObj,           
         };	
+		
+		if(starChatSDK != null)
+		{
+			starChatSDK.leaveRoom();
+			starChatSDK.sigDisconnect();
+			starChatSDK = null;
+		}
 		
 		starChatSDK = new StarRtc.StarChatSDK('open', chatInnerCallback, starChatSDKUserData);
 		starChatSDK.login(agentId, userId, authKey);
