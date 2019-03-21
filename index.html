@@ -114,7 +114,10 @@ author:support@starRTC.com
     <div class="footer" id="footer" >
 	<center>安卓和iOS程序也可以和这个页面互发消息：
 	<a id = "continue" onMouseOut="hideAndroidQr()" onmouseover="showAndroidQr()" class="a_pay">下载安卓版</a>
-	<a id = "continue" onMouseOut="hideiOSQr()" onmouseover="showiOSQr()" class="a_pay">下载iOS版</a>&nbsp;&nbsp;
+	<!--
+	<a id = "continue" onMouseOut="hideiOSQr()" onmouseover="showiOSQr()" class="a_pay">下载iOS版</a>
+	-->
+	&nbsp;&nbsp;
 	<a href='https://www.starrtc.com/demo/web/' target="_blank">网页视频聊天</a>
 	</center>	
 	
@@ -215,9 +218,40 @@ author:support@starRTC.com
                 setSingleMessageInnerHTML(status+":"+msgTxt);
                 setGroupMessageInnerHTML("all",status+":"+msgTxt);
                 break;
+			case "onErrorMessage":
+				switch (data.errId) {
+					case 2:
+						alert("您的账号在另外的设备登录，您已经下线");
+						document.getElementById('userName').innerHTML = "";
+						StarRtc.Instance.logout();
+						newLogin();
+						break;
+				}
+			break;
         }
     };
 
+	function newLogin()
+	{
+		userId = ""+(Math.floor(Math.random()*900000+100000));
+        $.get("https://api.starrtc.com/public/authKey?userid="+userId+"&appid="+agentId, function (data,status) {
+            traceLog("authKey 返回："+status+"||"+data);
+            if(status === "success"){
+                var obj = JSON.parse(data);
+                if(obj.status == 1){
+                    document.getElementById('userName').innerHTML += userId;
+                    authKey = obj.data;
+					setCookie("starrtc_userId", userId, null);
+                    setCookie("starrtc_authKey", authKey, null);
+                    StarRtc.Instance.version();
+                    StarRtc.Instance.login(agentId, userId, authKey, callBack);
+                }
+            }else{
+                document.getElementById('userName').innerHTML += "登录失败";
+            }
+        });
+	}
+	
     var localId      = getCookie("starrtc_userId");
     var localAuthKey = getCookie("starrtc_authKey");
     if(localId != "" && localAuthKey != ""){
@@ -227,23 +261,7 @@ author:support@starRTC.com
         StarRtc.Instance.version();
         StarRtc.Instance.login(agentId, userId, authKey, callBack);
     }else{
-        userId = ""+(Math.floor(Math.random()*900000+100000));
-        setCookie("starrtc_userId", userId, null);
-        $.get("https://api.starrtc.com/public/authKey?userid="+userId+"&appid="+agentId, function (data,status) {
-            traceLog("authKey 返回："+status+"||"+data);
-            if(status === "success"){
-                var obj = JSON.parse(data);
-                if(obj.status == 1){
-                    document.getElementById('userName').innerHTML += userId;
-                    authKey = obj.data;
-                    setCookie("starrtc_authKey", authKey, null);
-                    StarRtc.Instance.version();
-                    StarRtc.Instance.login(agentId, userId, authKey, callBack);
-                }
-            }else{
-                document.getElementById('userName').innerHTML += "登录失败";
-            }
-        });
+		newLogin();
     }
 
 
