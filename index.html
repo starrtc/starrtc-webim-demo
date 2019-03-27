@@ -183,6 +183,10 @@ author:support@starRTC.com
             case "connect closed":
                 traceLog(status+":"+data);
                 break;
+			//收到登录消息
+			case "onLoginMessage":
+				traceLog("login:" + data.status);
+				break;
             //收到一对一消息
             case "onSingleMessage":
                 var fid     = data.fromId;
