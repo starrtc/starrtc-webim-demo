@@ -19,129 +19,260 @@ author:support@starRTC.com
 
 
 -->
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>StarRTC IM Demo</title>
-    <style >
-        .parent{height: 100%; overflow: hidden;background-color: orange;}
-        .top{position: absolute; top: 0; left: 0; right: 0; height: 0; height: 80px;}
-        .middle{position: absolute; top: 70px; left: 0; right: 0; bottom: 60px; background-color: grey; overflow: hidden;}
-		.footer{position: absolute; left: 0; right: 0; bottom: 0; height: 60px;overflow: auto;background-color: white;color: black}
-        .bottom{position: absolute; left: 0; right: 0; bottom: 0; height: 0;overflow: auto;background-color: black;color: white}
-        .button{ height:50px;background-color: lightgrey ;text-align: center; line-height:50px;cursor:pointer;border:inset;border-width: 1px;border-color:transparent;border-bottom-color: gray;}
-        .button2{ height:30px;background-color: transparent;text-align: center; line-height:30px;cursor:pointer;border:inset;border-width: 1px;border-color:transparent;border-bottom-color: #e5e5ce;}
 
-        .mask { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .1); }
-        .nav { position: absolute; z-index: 11; left: -7rem; top: 0; width: 100px; height: 100%; background: #555;  }
-        .nav { transition: left linear .1s; }
-        .nav a { display: block; padding: 1em 0; border-bottom: 1px solid #888; font-size: 16px; color: #eee; text-align: center; }
-        .nav .avatar-big { width: 3rem;  border-radius: 50%; box-shadow: 0 6px 12px rgba(0, 0, 0, .175); }
-        .avatar-small {position: absolute;z-index: 2;left: 15px; top: 15px;width: 40px;height: 40px;}
-        ul, li {list-style: none;padding: 0;margin: 0;}
-    </style>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>StarRTC IM Demo</title>
+	<style>
+		.parent {
+			height: 100%;
+			overflow: hidden;
+			background-color: orange;
+		}
+
+		.top {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 0;
+			height: 80px;
+		}
+
+		.middle {
+			position: absolute;
+			top: 70px;
+			left: 0;
+			right: 0;
+			bottom: 60px;
+			background-color: grey;
+			overflow: hidden;
+		}
+
+		.footer {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 60px;
+			overflow: auto;
+			background-color: white;
+			color: black
+		}
+
+		.bottom {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 0;
+			overflow: auto;
+			background-color: black;
+			color: white
+		}
+
+		.button {
+			height: 50px;
+			background-color: lightgrey;
+			text-align: center;
+			line-height: 50px;
+			cursor: pointer;
+			border: inset;
+			border-width: 1px;
+			border-color: transparent;
+			border-bottom-color: gray;
+		}
+
+		.button2 {
+			height: 30px;
+			background-color: transparent;
+			text-align: center;
+			line-height: 30px;
+			cursor: pointer;
+			border: inset;
+			border-width: 1px;
+			border-color: transparent;
+			border-bottom-color: #e5e5ce;
+		}
+
+		.mask {
+			display: none;
+			position: fixed;
+			z-index: 10;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, .1);
+		}
+
+		.nav {
+			position: absolute;
+			z-index: 11;
+			left: -7rem;
+			top: 0;
+			width: 100px;
+			height: 100%;
+			background: #555;
+		}
+
+		.nav {
+			transition: left linear .1s;
+		}
+
+		.nav a {
+			display: block;
+			padding: 1em 0;
+			border-bottom: 1px solid #888;
+			font-size: 16px;
+			color: #eee;
+			text-align: center;
+		}
+
+		.nav .avatar-big {
+			width: 3rem;
+			border-radius: 50%;
+			box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+		}
+
+		.avatar-small {
+			position: absolute;
+			z-index: 2;
+			left: 15px;
+			top: 15px;
+			width: 40px;
+			height: 40px;
+		}
+
+		ul,
+		li {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+	</style>
 	<link rel="stylesheet" href="jquery.contextMenu.min.css">
 </head>
 
 <body>
-<div class="parent">
-    <div class="top" style="text-align: center">
-        <img src="menu_gray.png" class="avatar-small"/>
-        <h2 id="userName"></h2>
-    </div>
+	<div class="parent">
+		<div class="top" style="text-align: center">
+			<img src="menu_gray.png" class="avatar-small" />
+			<h2 id="userName"></h2>
+		</div>
 
 
-    <div class="middle">
-        <!--单聊-->
-        <div id="singleChatView" style="width: 100%;height: 100%;visibility: visible">
-            <div style="position: absolute; top: 0; left: 0; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
-                <input id="targetUserId" type="text" style="width: 100%;height: 100%;background: whitesmoke;padding: 0;border-width: 0;text-align: center"  placeholder="点击这里 输入对方ID">
-            </div>
-            <div id="sigleMessage" class="content-menu" style="position: absolute; top: 50px; left: 0; right: 0px; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
-            </div>
-            <!-- <div id="video" style="position: absolute; width: 200px ;top: 50px; right: 0; bottom: 50px; background-color: darkgrey; overflow: hidden;text-align: center">
+		<div class="middle">
+			<!--单聊-->
+			<div id="singleChatView" style="width: 100%;height: 100%;visibility: visible">
+				<div
+					style="position: absolute; top: 0; left: 0; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
+					<input id="targetUserId" type="text"
+						style="width: 100%;height: 100%;background: whitesmoke;padding: 0;border-width: 0;text-align: center"
+						placeholder="点击这里 输入对方ID">
+				</div>
+				<div id="sigleMessage" class="content-menu"
+					style="position: absolute; top: 50px; left: 0; right: 0px; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
+				</div>
+				<!-- <div id="video" style="position: absolute; width: 200px ;top: 50px; right: 0; bottom: 50px; background-color: darkgrey; overflow: hidden;text-align: center">
                  <br/>视频区<br/>
                  <video id="selfvideo" style="width: 100%;height: 150px" src="" controls="controls">您的浏览器不支持video标签</video>
                  <video id="targetvideo" style="width: 100%;height: 150px" src="" controls="controls">您的浏览器不支持video标签</video>
             </div>-->
-            <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background-color: white;">
-                <div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
-                    <input id="sigleText" type="text" onkeydown="singlechatkeydown()" style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
-                </div>
-                <div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  " onclick="sendSingleChat()">发送</div>
-            </div>
-        </div>
-		
-		<!--群组-->
-        <div id="groupView" style="width: 100%;height: 100%;visibility: visible; background-color:#b6cdc9">
-            <div id="groupList" style="position: absolute; width: 100px ;top: 0; left:0; bottom: 0; background-color:beige; overflow: auto;text-align: center">
-                <br/>群列表<br/><br/>
-            </div>
-            <div id="targetGroupId" style="position: absolute; top: 0; left: 100px; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
-            </div>
-            <div id="groupMessage" style="position: absolute; top: 50px; left: 100px; right: 0; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
-            </div>
-            <div style="position: absolute; left: 100px; right: 0; bottom: 0; height: 50px; background-color: white;" id="groupEdit">
-                <div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
-                    <input id="groupText" type="text" style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
-                </div>
-                <div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  " onclick="sendChatMsg ()">发送</div>
-            </div>
-        </div>
-		
-        <!--聊天室-->
-        <div id="chatRoomView" style="width: 100%;height: 100%;visibility: visible; background-color: beige">
-            <div id="roomList" style="position: absolute; width: 100px ;top: 0; left:0; bottom: 0; background-color:beige; overflow: auto;text-align: center">
-                <br/>聊天室列表<br/><br/>
-            </div>
-			
-            <div id="targetChatRoomId" style="position: absolute; top: 0; left: 100px; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
-            </div>
-			
-            <div id="chatRoomMessage" class="content-menu" style="position: absolute; top: 50px; left: 100px; right: 0; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
-            </div>
-			
-            <div  id="chatRoomedit" style="position: absolute; left: 100px; right: 0; bottom: 0; height: 50px; background-color: white;">
-                <div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
-                    <input id="chatRoomText" type="text" onkeydown="chatkeydown()" style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
-                </div>
-                <div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  " onclick="sendChatMsg()">发送</div>
-            </div>
-        </div>
+				<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background-color: white;">
+					<div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
+						<input id="sigleText" type="text" onkeydown="singlechatkeydown()"
+							style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
+					</div>
+					<div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  "
+						onclick="sendSingleChat()">发送</div>
+				</div>
+			</div>
 
-     
-    </div>
-	
-    <div class="footer" id="footer" >
-	<center>安卓和iOS程序也可以和这个页面互发消息：
-	<a id = "continue" onMouseOut="hideAndroidQr()" onmouseover="showAndroidQr()" class="a_pay">下载安卓版</a>
-	<!--
+			<!--群组-->
+			<div id="groupView" style="width: 100%;height: 100%;visibility: visible; background-color:#b6cdc9">
+				<div id="groupList"
+					style="position: absolute; width: 100px ;top: 0; left:0; bottom: 0; background-color:beige; overflow: auto;text-align: center">
+					<br />群列表<br /><br />
+				</div>
+				<div id="targetGroupId"
+					style="position: absolute; top: 0; left: 100px; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
+				</div>
+				<div id="groupMessage"
+					style="position: absolute; top: 50px; left: 100px; right: 0; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
+				</div>
+				<div style="position: absolute; left: 100px; right: 0; bottom: 0; height: 50px; background-color: white;"
+					id="groupEdit">
+					<div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
+						<input id="groupText" type="text"
+							style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
+					</div>
+					<div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  "
+						onclick="sendGroupChat ()">发送</div>
+				</div>
+			</div>
+
+			<!--聊天室-->
+			<div id="chatRoomView" style="width: 100%;height: 100%;visibility: visible; background-color: beige">
+				<div id="roomList"
+					style="position: absolute; width: 100px ;top: 0; left:0; bottom: 0; background-color:beige; overflow: auto;text-align: center">
+					<br />聊天室列表<br /><br />
+				</div>
+
+				<div id="targetChatRoomId"
+					style="position: absolute; top: 0; left: 100px; right: 0; height: 0; background-color: snow; height: 50px;text-align: center; line-height:50px;   ">
+				</div>
+
+				<div id="chatRoomMessage" class="content-menu"
+					style="position: absolute; top: 50px; left: 100px; right: 0; bottom: 50px; background-color: white; overflow: auto;padding: 5px;">
+				</div>
+
+				<div id="chatRoomedit"
+					style="position: absolute; left: 100px; right: 0; bottom: 0; height: 50px; background-color: white;">
+					<div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
+						<input id="chatRoomText" type="text" onkeydown="chatkeydown()"
+							style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
+					</div>
+					<div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  "
+						onclick="sendChatMsg()">发送</div>
+				</div>
+			</div>
+
+
+		</div>
+
+		<div class="footer" id="footer">
+			<center>安卓和iOS程序也可以和这个页面互发消息：
+				<a id="continue" onMouseOut="hideAndroidQr()" onmouseover="showAndroidQr()" class="a_pay">下载安卓版</a>
+				<!--
 	<a id = "continue" onMouseOut="hideiOSQr()" onmouseover="showiOSQr()" class="a_pay">下载iOS版</a>
 	-->
-	&nbsp;&nbsp;
-	<a href='https://www.starrtc.com/demo/web/' target="_blank">网页视频聊天</a>
-	</center>	
-	
-	
-	<center>Copyright &copy; <a href='https://docs.starrtc.com/en/download/'>starRTC.com</a></center>
+				&nbsp;&nbsp;
+				<a href='https://www.starrtc.com/demo/web/' target="_blank">网页视频聊天</a>
+			</center>
+
+
+			<center>Copyright &copy; <a href='https://docs.starrtc.com/en/download/'>starRTC.com</a></center>
+		</div>
+
+		<div class="bottom" id="logs"></div>
 	</div>
-	
-    <div class="bottom" id="logs" ></div>
-</div>
 
-<!-- 网页遮罩 -->
-<div class="mask"></div>
+	<!-- 网页遮罩 -->
+	<div class="mask"></div>
 
-<!-- 侧边栏 -->
-<div class="nav">
-    <div style="width:100%; height: 70px" ></div>
-    <div class="button" style="width:100%;" onclick="showSingle()">一对一</div>
-    <div class="button" style="width:100%; " onclick="showGroup()">群组</div>
-    <div class="button" style="width:100%; " onclick="showChatRoom()">聊天室</div>
-</div>
+	<!-- 侧边栏 -->
+	<div class="nav">
+		<div style="width:100%; height: 70px"></div>
+		<div class="button" style="width:100%;" onclick="showSingle()">一对一</div>
+		<div class="button" style="width:100%; " onclick="showGroup()">群组</div>
+		<div class="button" style="width:100%; " onclick="showChatRoom()">聊天室</div>
+	</div>
 
-<div id="android_app" style="display:none;height:200px;back-ground:#f00;position:absolute;"><img src="android.png"/></div>
-<div id="ios_app" style="display:none;height:200px;back-ground:#f00;position:absolute;"><img src="ios.png"/></div>
-	
+	<div id="android_app" style="display:none;height:200px;back-ground:#f00;position:absolute;"><img
+			src="android.png" /></div>
+	<div id="ios_app" style="display:none;height:200px;back-ground:#f00;position:absolute;"><img src="ios.png" /></div>
+
 </body>
 
 <script type="text/javascript" src="star_rtc_lib.min.js"></script>
@@ -152,76 +283,121 @@ author:support@starRTC.com
 
 
 <script type="text/javascript">
+
+	////////////////////////共有云私有云区别搜索 StarRtc.Instance.configModePulic 查看
+
+	////////////////////////私有云改配置///////////////////////
+	///////////////////////以下10.90.7.70需替换为私有部署IP////
+
+	//StarRtc.Instance.setConfigModePulic(false);
+
+	//StarRtc.Instance.setMsgServerInfo("10.90.7.70", 19903) 					//ip, websocket port  //需要手动从浏览器输入 https://10.90.7.70:29991 信任证书
+
+	//StarRtc.Instance.setchatRoomServerInfo("10.90.7.70", 19906) 			//ip, websocket port //需要手动从浏览器输入 https://10.90.7.70:29993 信任证书
+
+	//StarRtc.Instance.setSrcServerInfo("10.90.7.70", 19934, 19935)  			//ip, websocket port, webrtc port //需要手动从浏览器输入 https://10.90.7.70:29994 信任证书
+
+	//StarRtc.Instance.setVdnServerInfo("10.90.7.70", 19940, 19941) 			//ip, websocket port, webrtc port //需要手动从浏览器输入 https://10.90.7.70:29995 信任证书
+
+	//StarRtc.Instance.setVoipServerInfo("10.90.7.70", 10086, 10087, 10088) 	//ip, voipServer port, websocket port, webrtc port //需要手动从浏览器输入 https://10.90.7.70:29992 信任证书
+
+	//StarRtc.Instance.setWebrtcServerIP("10.90.7.70");
+
+	////////////////////////公有云改配置///////////////////////
+
+	//StarRtc.Instance.setConfigModePulic(true);
+
+	//StarRtc.Instance.setLoginServerUrl("ips2.starrtc.com");
+
+	//StarRtc.Instance.setMsgScheduleUrl("ips2.starrtc.com");
+
+	//StarRtc.Instance.setChatRoomScheduleUrl("ips2.starrtc.com");
+
+	//StarRtc.Instance.setSrcScheduleUrl("ips2.starrtc.com");
+
+	//StarRtc.Instance.setVdnScheduleUrl("ips2.starrtc.com");
+
+	//StarRtc.Instance.setVoipServerUrl("ips2.starrtc.com");
+
+	//StarRtc.Instance.setWorkServerUrl("https://api.starrtc.com/public");
+
+	//StarRtc.Instance.setWebrtcServerIP("192.168.0.1");
+
+
 	// 集成文档请参考 https://docs.starrtc.com/docs/h5-1.html
-    btn  = document.getElementsByClassName('avatar-small')[0];
-    mask = document.getElementsByClassName('mask')[0];
-    nav  = document.getElementsByClassName('nav')[0];
+	btn = document.getElementsByClassName('avatar-small')[0];
+	mask = document.getElementsByClassName('mask')[0];
+	nav = document.getElementsByClassName('nav')[0];
 
-    btn.addEventListener('click', function () {
-        mask.style.display = 'block';
-        nav.style.left = 0;
-    }, false);
+	btn.addEventListener('click', function () {
+		mask.style.display = 'block';
+		nav.style.left = 0;
+	}, false);
 
-    mask.addEventListener('click', function () {
-        mask.style.display = 'none';
-        nav.style.left = '-110px';
-    }, false)
+	mask.addEventListener('click', function () {
+		mask.style.display = 'none';
+		nav.style.left = '-110px';
+	}, false)
 
-    //showSingle();
-	showChatRoom();
-    var agentId = "stargWeHN8Y7";
-    var userId = "";
-    var authKey = "";
+	//showSingle();
+	var agentId = "stargWeHN8Y7";
+	var userId = "";
+	var authKey = "";
 	var starChatSDK = null;
+	showChatRoom();
 
-    var callBack = function (data, status) {
-        traceLog(data+"||"+status);
-        switch (status){
-            //链接状态
-            case "connect failed":
-            case "connect success":
-            case "connect closed":
-                traceLog(status+":"+data);
-                break;
+	var callBack = function (data, status) {
+		traceLog(data + "||" + status);
+		switch (status) {
+			//链接状态
+			case "connect success":
+			case "connect failed":
+			case "connect closed":
+				traceLog(status + ":" + data);
+				break;
 			//收到登录消息
 			case "onLoginMessage":
+				if (data.status == "success") {
+					getGroupList();
+					StarRtc.Instance.getOnlineNumber();
+				}
 				traceLog("login:" + data.status);
 				break;
-            //收到一对一消息
-            case "onSingleMessage":
-                var fid     = data.fromId;
-				
-                //var msgJson = JSON.parse(data.msg);
-                var msgJson = data.msg;
-                var msgTxt  = msgJson.contentData;
-                setSingleMessageInnerHTML(fid+":<br/>&nbsp;&nbsp;&nbsp;"+msgTxt);
-                break;
-            case "onGroupMessage":
-                var gid = data.groupId;
-                var fid = data.fromId;
-                var msgJson = JSON.parse(data.msg);
-                var msgTxt = msgJson.contentData;
-                setGroupMessageInnerHTML(gid,fid+":<br/>&nbsp;&nbsp;&nbsp;"+msgTxt);
-                break;
-            case "onGroupPrivateMessage":
-                var gid = data.groupId;
-                var fid = data.fromId;
-                var msgJson = JSON.parse(data.msg);
-                var msgTxt = msgJson.contentData;
-                setGroupMessageInnerHTML(gid,fid+":<br/>&nbsp;&nbsp;&nbsp;"+msgTxt);
-                break;
-            case "onGroupPushMessage":
-                var gid = data.groupId;
-                var msgJson = JSON.parse(data.msg);
-                var msgTxt = msgJson.contentData;
-                setGroupMessageInnerHTML(gid,msgTxt);
-                break;
-            case "onSystemPushMessage":
-                var msgJson = JSON.parse(data.msg);
-                var msgTxt = msgJson.contentData;
-                setSingleMessageInnerHTML(status+":"+msgTxt);
-                setGroupMessageInnerHTML("all",status+":"+msgTxt);
-                break;
+			//收到一对一消息
+			case "onSingleMessage":
+				var fid = data.fromId;
+
+				//var msgJson = JSON.parse(data.msg);
+				var msgJson = data.msg;
+				var msgTxt = msgJson.contentData;
+				setSingleMessageInnerHTML(fid + ":<br/>&nbsp;&nbsp;&nbsp;" + msgTxt);
+				break;
+			case "onGroupMessage":
+				var gid = data.groupId;
+				var fid = data.fromId;
+				var msgJson = JSON.parse(data.msg);
+				var msgTxt = msgJson.contentData;
+				setGroupMessageInnerHTML(gid, fid + ":<br/>&nbsp;&nbsp;&nbsp;" + msgTxt);
+				break;
+			case "onGroupPrivateMessage":
+				var gid = data.groupId;
+				var fid = data.fromId;
+				var msgJson = JSON.parse(data.msg);
+				var msgTxt = msgJson.contentData;
+				setGroupMessageInnerHTML(gid, fid + ":<br/>&nbsp;&nbsp;&nbsp;" + msgTxt);
+				break;
+			case "onGroupPushMessage":
+				var gid = data.groupId;
+				var msgJson = JSON.parse(data.msg);
+				var msgTxt = msgJson.contentData;
+				setGroupMessageInnerHTML(gid, msgTxt);
+				break;
+			case "onSystemPushMessage":
+				var msgJson = JSON.parse(data.msg);
+				var msgTxt = msgJson.contentData;
+				setSingleMessageInnerHTML(status + ":" + msgTxt);
+				setGroupMessageInnerHTML("all", status + ":" + msgTxt);
+				break;
 			case "onErrorMessage":
 				switch (data.errId) {
 					case 2:
@@ -231,398 +407,444 @@ author:support@starRTC.com
 						newLogin();
 						break;
 				}
-			break;
-        }
-    };
+				break;
+			case "onGetGroupList":
+				groupList = data.groupsInfo;
+				for (var i = 0; i < groupList.length; i++) {
+					var item = groupList[i];
+					document.getElementById('groupList').innerHTML +=
+						"<div class='button2' onclick='openGroup(" + i + ")'>" + item.groupName + "</div>";
+				}
+				break;
+			case "onGetOnlineNumber":
+				//console.log("在线人数：" + data.count)
+				break;
+			case "onGetGroupUserList":
+				break;
+			case "onGetAllUserList":
+				break;
+		}
+	};
 
-	function newLogin()
-	{
-		userId = ""+(Math.floor(Math.random()*900000+100000));
-        $.get("https://api.starrtc.com/public/authKey?userid="+userId+"&appid="+agentId, function (data,status) {
-            traceLog("authKey 返回："+status+"||"+data);
-            if(status === "success"){
-                var obj = JSON.parse(data);
-                if(obj.status == 1){
-                    document.getElementById('userName').innerHTML += userId;
-                    authKey = obj.data;
-					setCookie("starrtc_userId", userId, null);
-                    setCookie("starrtc_authKey", authKey, null);
-                    StarRtc.Instance.version();
-                    StarRtc.Instance.login(agentId, userId, authKey, callBack);
-                }
-            }else{
-                document.getElementById('userName').innerHTML += "登录失败";
-            }
-        });
+	function newLogin() {
+		userId = "" + (Math.floor(Math.random() * 900000 + 100000));
+		if (StarRtc.Instance.configModePulic) {
+			$.get("https://api.starrtc.com/public/authKey?userid=" + userId + "&appid=" + agentId, function (data, status) {
+				traceLog("authKey 返回：" + status + "||" + data);
+				if (status === "success") {
+					var obj = JSON.parse(data);
+					if (obj.status == 1) {
+						document.getElementById('userName').innerHTML += userId;
+						authKey = obj.data;
+						setCookie("starrtc_userId", userId, null);
+						setCookie("starrtc_authKey", authKey, null);
+						StarRtc.Instance.version();
+						StarRtc.Instance.login(agentId, userId, authKey, callBack);
+					}
+				} else {
+					document.getElementById('userName').innerHTML += "登录失败";
+				}
+			});
+		}
+		else {
+			setCookie("starrtc_userId", userId, null);
+			document.getElementById('userName').innerHTML += userId;
+			authKey = "";
+			StarRtc.Instance.version();
+			StarRtc.Instance.login(agentId, userId, authKey, callBack);
+		}
 	}
-	
-    var localId      = getCookie("starrtc_userId");
-    var localAuthKey = getCookie("starrtc_authKey");
-    if(localId != "" && localAuthKey != ""){
-        userId  = localId;
-        authKey = localAuthKey;
-        document.getElementById('userName').innerHTML += userId;
-        StarRtc.Instance.version();
-        StarRtc.Instance.login(agentId, userId, authKey, callBack);
-    }else{
+
+	var localId = getCookie("starrtc_userId");
+	var localAuthKey = getCookie("starrtc_authKey");
+	if (localId != "" && (localAuthKey != "" || (!StarRtc.Instance.configModePulic))) {
+		userId = localId;
+		authKey = localAuthKey;
+		document.getElementById('userName').innerHTML += userId;
+		StarRtc.Instance.version();
+		StarRtc.Instance.login(agentId, userId, authKey, callBack);
+	} else {
 		newLogin();
-    }
+	}
 
 
-    var chatRoomList;
-    var selectRoomIndex;
-    var groupList;
-    var selectGroupIndex;
+	var chatRoomList;
+	var selectRoomIndex;
+	var groupList;
+	var selectGroupIndex;
 	//获取聊天室列表
-    $.get("https://api.starrtc.com/public/chat/list.php?appid="+agentId,function (data,status) {
-        traceLog("chatList 返回："+status+"||"+data);
-        if(status === "success"){
-            var obj = JSON.parse(data);
-            if(obj.status == 1){
-                chatRoomList = obj.data;
-                for(var i = 0;i<chatRoomList.length;i++){
-                    var item = chatRoomList[i];
-                    document.getElementById('roomList').innerHTML +=
-                        "<div class='button2' onclick='joinChatRoom("+i+")'>"+item.Name+"</div>";
-                }
-            }else{
-                document.getElementById('roomList').innerHTML += "获取失败";
-            }
-        }else{
-            document.getElementById('roomList').innerHTML += "获取失败";
-        }
-    });
+	function getChatRoomList() {
+		$("#roomList").children(".button2").remove();
+		if (StarRtc.Instance.configModePulic) {
+			$.get("https://api.starrtc.com/public/chat/list.php?appid=" + agentId, function (data, status) {
+				traceLog("chatList 返回：" + status + "||" + data);
+				if (status === "success") {
+					var obj = JSON.parse(data);
+					if (obj.status == 1) {
+						chatRoomList = obj.data;
+						for (var i = 0; i < chatRoomList.length; i++) {
+							var item = chatRoomList[i];
+							document.getElementById('roomList').innerHTML +=
+								"<div class='button2' onclick='joinChatRoom(" + i + ")'>" + item.Name + "</div>";
+						}
+					} else {
+						document.getElementById('roomList').innerHTML += "获取失败";
+					}
+				} else {
+					document.getElementById('roomList').innerHTML += "获取失败";
+				}
+			});
+		}
+		else {
+			StarRtc.Instance.queryChatRoom(function (status, listData) {
+				chatRoomList = listData;
+				for (var i = 0; i < chatRoomList.length; i++) {
+					var item = chatRoomList[i];
+					document.getElementById('roomList').innerHTML +=
+						"<div class='button2' onclick='joinChatRoom(" + i + ")'>" + item.Name + "</div>";
+				}
+			});
+		}
+	}
 
-    //获取群组列表
-    $.get("https://api.starrtc.com/public/group/list_all.php"+"?userid="+userId+"&appid="+agentId,function (data,status) {
-        traceLog("groupList 返回："+status+"||"+data);
-        if(status === "success"){
-            var obj = JSON.parse(data);
-            if(obj.status == 1){
-                groupList = obj.data;
-                for(var i = 0;i<groupList.length;i++){
-                    var item = groupList[i];
-                    document.getElementById('groupList').innerHTML +=
-                        "<div class='button2' onclick='openGroup("+i+")'>"+item.groupName+"</div>";
-                }
-            }else{
-                // document.getElementById('groupList').innerHTML += "获取失败";
-            }
-        }else{
-            // document.getElementById('groupList').innerHTML += "获取失败";
-        }
-    });
+	function getGroupList() {
+		//获取群组列表
+		$("#groupList").children(".button2").remove();
+		if (StarRtc.Instance.configModePulic) {
+			$.get("https://api.starrtc.com/public/group/list_all.php" + "?userid=" + userId + "&appid=" + agentId, function (data, status) {
+				traceLog("groupList 返回：" + status + "||" + data);
+				if (status === "success") {
+					var obj = JSON.parse(data);
+					if (obj.status == 1) {
+						groupList = obj.data;
+						for (var i = 0; i < groupList.length; i++) {
+							var item = groupList[i];
+							document.getElementById('groupList').innerHTML +=
+								"<div class='button2' onclick='openGroup(" + i + ")'>" + item.groupName + "</div>";
+						}
+					} else {
+						// document.getElementById('groupList').innerHTML += "获取失败";
+					}
+				} else {
+					// document.getElementById('groupList').innerHTML += "获取失败";
+				}
+			});
+		}
+		else {
+			StarRtc.Instance.getGroupList();
+		}
+	}
 
-    var msgIndex = 0;
-    //发送单聊消息
-    function sendSingleChat() {
-        var targetUid = document.getElementById('targetUserId').value;
-        var message   = document.getElementById('sigleText').value;
+	var msgIndex = 0;
+	//发送单聊消息
+	function sendSingleChat() {
+		var targetUid = document.getElementById('targetUserId').value;
+		var message = document.getElementById('sigleText').value;
 
-        if(targetUid==null||targetUid==undefined||targetUid==""){
-            alert("对方ID不能为空");
-            return;
-        }
-		if(message==null||message==undefined||message==""){
-            alert("请输入点什么");
-            return;
-        }
-        setSingleMessageInnerHTML(userId+":<br/>&nbsp;&nbsp;&nbsp;"+message);
-        StarRtc.Instance.sendSingleMsg(targetUid, "新消息", message);
-		
+		if (targetUid == null || targetUid == undefined || targetUid == "") {
+			alert("对方ID不能为空");
+			return;
+		}
+		if (message == null || message == undefined || message == "") {
+			alert("请输入点什么");
+			return;
+		}
+		setSingleMessageInnerHTML(userId + ":<br/>&nbsp;&nbsp;&nbsp;" + message);
+		StarRtc.Instance.sendSingleMsg(targetUid, "新消息", message);
+
 		//清空输入框		
 		$("#sigleText").val('');
-    }
-    //发送群聊消息
-    function sendGroupChat() {
-        if(selectGroupIndex==undefined){
-            alert("对方ID不能为空");
-            return;
-        }
-        var targetGroupId = groupList[selectGroupIndex].groupId;
-        var message = document.getElementById('groupText').value;
+	}
+	//发送群聊消息
+	function sendGroupChat() {
+		if (selectGroupIndex == undefined) {
+			alert("对方ID不能为空");
+			return;
+		}
+		var targetGroupId = groupList[selectGroupIndex].groupId;
+		var message = document.getElementById('groupText').value;
 
-        setGroupMessageInnerHTML(targetGroupId,userId+":<br/>&nbsp;&nbsp;&nbsp;"+message);
-        StarRtc.Instance.sendGroupMsg(targetGroupId,msgIndex++,"新消息",message);
-    }
+		setGroupMessageInnerHTML(targetGroupId, userId + ":<br/>&nbsp;&nbsp;&nbsp;" + message);
+		StarRtc.Instance.sendGroupMsg(targetGroupId, "新消息", message);
+	}
 
-	function chatkeydown(){
-		if(event.keyCode == 13){ //按下回车键
+	function chatkeydown() {
+		if (event.keyCode == 13) { //按下回车键
 			sendChatMsg();
-			
-		}	
+
+		}
 	}
-	function singlechatkeydown(){
-		if(event.keyCode == 13){ //按下回车键
+	function singlechatkeydown() {
+		if (event.keyCode == 13) { //按下回车键
 			sendSingleChat();
-			
-		}	
+
+		}
 	}
-	
+
 	//发送聊天室消息
-    function sendChatMsg() {
-        var message   = document.getElementById('chatRoomText').value;
-		if(message==null||message==undefined||message==""){
-            alert("请输入点什么");
-            return;
-        }
+	function sendChatMsg() {
+		var message = document.getElementById('chatRoomText').value;
+		if (message == null || message == undefined || message == "") {
+			alert("请输入点什么");
+			return;
+		}
 		var time = new Date();
-        var timestr =   ("0" + time.getHours()).slice(-2)   + ":" + 
-						("0" + time.getMinutes()).slice(-2) + ":" + 
-						("0" + time.getSeconds()).slice(-2);
-	
-        setChatMessageInnerHTML(userId+"("+timestr+"):<br/>&nbsp;&nbsp;&nbsp;"+message);		
+		var timestr = ("0" + time.getHours()).slice(-2) + ":" +
+			("0" + time.getMinutes()).slice(-2) + ":" +
+			("0" + time.getSeconds()).slice(-2);
+
+		setChatMessageInnerHTML(userId + "(" + timestr + "):<br/>&nbsp;&nbsp;&nbsp;" + message);
 		starChatSDK.sendChatMsg(message);
-		
+
 		//ray
 		starChatSDK.getRoomOnlineNum();
-		
+
 		//清空输入框
 		//message = "";
 		$("#chatRoomText").val('');
-    }
-	
-    //关闭
-    function closeWebSocket(){
-        StarRtc.Instance.logout();
-    }
+	}
 
-    //将消息显示在网页上
-    function setSingleMessageInnerHTML(innerHTML) {
-        var div = document.getElementById('sigleMessage')
-        div.innerHTML += innerHTML + '<br/><br/>';
-        div.scrollTop = div.scrollHeight;
-    }
-    //将消息显示在网页上
-    function setGroupMessageInnerHTML(groupId,innerHTML) {
-        if(selectGroupIndex!=undefined&&groupId==groupList[selectGroupIndex].groupId){
-            var div = document.getElementById('groupMessage')
-            div.innerHTML += innerHTML + '<br/><br/>';
-            div.scrollTop = div.scrollHeight;
-        }
-    }
-    //将消息显示在网页上
-    function setChatMessageInnerHTML(innerHTML) {
-        var div = document.getElementById('chatRoomMessage')
-        div.innerHTML += innerHTML + '<br/><br/>';
-        div.scrollTop = div.scrollHeight;
-    }
+	//关闭
+	function closeWebSocket() {
+		StarRtc.Instance.logout();
+	}
 
-    //打印日志
-    function traceLog(innerHTML) {
-        var div = document.getElementById('logs')
-        div.innerHTML += innerHTML + '<br/>----------------------<br/>';
-        div.scrollTop = div.scrollHeight;
-    }
+	//将消息显示在网页上
+	function setSingleMessageInnerHTML(innerHTML) {
+		var div = document.getElementById('sigleMessage')
+		div.innerHTML += innerHTML + '<br/><br/>';
+		div.scrollTop = div.scrollHeight;
+	}
+	//将消息显示在网页上
+	function setGroupMessageInnerHTML(groupId, innerHTML) {
+		if (selectGroupIndex != undefined && groupId == groupList[selectGroupIndex].groupId) {
+			var div = document.getElementById('groupMessage')
+			div.innerHTML += innerHTML + '<br/><br/>';
+			div.scrollTop = div.scrollHeight;
+		}
+	}
+	//将消息显示在网页上
+	function setChatMessageInnerHTML(innerHTML) {
+		var div = document.getElementById('chatRoomMessage')
+		div.innerHTML += innerHTML + '<br/><br/>';
+		div.scrollTop = div.scrollHeight;
+	}
 
-    function showSingle(){
-        $("#singleChatView").show();
-        $("#chatRoomView").hide();
-        $("#groupView").hide();
-        mask.style.display = 'none';
-        nav.style.left = '-110px';
-    }
+	//打印日志
+	function traceLog(innerHTML) {
+		var div = document.getElementById('logs')
+		div.innerHTML += innerHTML + '<br/>----------------------<br/>';
+		div.scrollTop = div.scrollHeight;
+	}
 
-    function showChatRoom(){
-        $("#singleChatView").hide();
-        $("#chatRoomView").show();
-        $("#groupView").hide();
-        mask.style.display = 'none';
-        nav.style.left = '-110px';
-    }
+	function showSingle() {
+		$("#singleChatView").show();
+		$("#chatRoomView").hide();
+		$("#groupView").hide();
+		mask.style.display = 'none';
+		nav.style.left = '-110px';
+	}
 
-    function showGroup(){
-        $("#singleChatView").hide();
-        $("#chatRoomView").hide();
-        $("#groupView").show();
-        mask.style.display = 'none';
-        nav.style.left = '-110px';
-    }
+	function showChatRoom() {
+		$("#singleChatView").hide();
+		$("#chatRoomView").show();
+		$("#groupView").hide();
+		mask.style.display = 'none';
+		nav.style.left = '-110px';
+		getChatRoomList();
+	}
+
+	function showGroup() {
+		$("#singleChatView").hide();
+		$("#chatRoomView").hide();
+		$("#groupView").show();
+		mask.style.display = 'none';
+		nav.style.left = '-110px';
+		getGroupList();
+	}
 
 	var chatInnerCallback = function (data, status) {
 		var thisRoom = data.obj;
-        switch (status){
+		switch (status) {
 			case "connect success":
 				//alert('starChatSDK connect success');
 				thisRoom.joinRoom();
-				
+
 				break;
-            case "connect failed":
-            case "connect closed":	
+			case "connect failed":
+			case "connect closed":
 				//连接失败
-				if(!thisRoom.activeDisconnect())
-				{
+				if (!thisRoom.activeDisconnect()) {
 					alert('连接断开，正在重连中...');
 					thisRoom.sigConnect();
 				}
-                break;
+				break;
 			case "onChatRoomMessage":
-			{
-				//收到聊天室消息
-				switch(data.type)
 				{
-					case "createChatRoom":
-					//创建聊天室
-					//data.status == "success"为成功，data.chatroomId为聊天室Id
-					break;
-					case "deleteChatRoom":
-					//删除聊天室
-					//data.status == "success"为成功
-					break;
-					case "joinChatRoom":
-						//加入聊天室
-						//data.status == "success"为成功
-						alert('聊天室加入成功，可以发消息了');						
-						//starChatSDK.sendChatMsg('web chat');						
-						break;
-					case "getRoomOnlineNum":
-						//alert(data.onlineNum);					
-						//alert(data.userData.roomInfo.Name);	
-						showRoomOnlineNum(data.userData.roomInfo.Name, data.onlineNum);							
-						break;
-					case "recvChatPrivateMsg":
-					//收到聊天室私聊消息
-					case "recvChatMsg":
-						//收到聊天室消息
-						//消息结构
-						//data = {
-						//	"fromUserId": 消息来源
-						//	"msg": 消息结构
-						//}
-						//msg结构
-						//msg = {
-						//	"fromId": 消息来源
-						//	"targetId": 消息接收方
-						//	"time": 时间戳
-						//	"msgIndex": 消息序号
-						//	"type": 类型
-						//	"code": 消息控制类型码
-						//	"contentData": 消息内容
-						//};
-						var message = data.msg.contentData;
-						var fromId = data.msg.fromId;
-						//var fromId = data.fromUserId;
-						var time = new Date();
-						var timestr =   ("0" + time.getHours()).slice(-2)   + ":" + 
-						("0" + time.getMinutes()).slice(-2) + ":" + 
-						("0" + time.getSeconds()).slice(-2);
-						
-						setChatMessageInnerHTML(fromId+"("+timestr+"):<br/>&nbsp;&nbsp;&nbsp;"+message);	
-					break;
-					
+					//收到聊天室消息
+					switch (data.type) {
+						case "createChatRoom":
+							//创建聊天室
+							//data.status == "success"为成功，data.chatroomId为聊天室Id
+							break;
+						case "deleteChatRoom":
+							//删除聊天室
+							//data.status == "success"为成功
+							break;
+						case "joinChatRoom":
+							//加入聊天室
+							//data.status == "success"为成功
+							alert('聊天室加入成功，可以发消息了');
+							//starChatSDK.sendChatMsg('web chat');						
+							break;
+						case "getRoomOnlineNum":
+							//alert(data.onlineNum);					
+							//alert(data.userData.roomInfo.Name);	
+							showRoomOnlineNum(data.userData.roomInfo.Name, data.onlineNum);
+							break;
+						case "recvChatPrivateMsg":
+						//收到聊天室私聊消息
+						case "recvChatMsg":
+							//收到聊天室消息
+							//消息结构
+							//data = {
+							//	"fromUserId": 消息来源
+							//	"msg": 消息结构
+							//}
+							//msg结构
+							//msg = {
+							//	"fromId": 消息来源
+							//	"targetId": 消息接收方
+							//	"time": 时间戳
+							//	"msgIndex": 消息序号
+							//	"type": 类型
+							//	"code": 消息控制类型码
+							//	"contentData": 消息内容
+							//};
+							var message = data.msg.contentData;
+							var fromId = data.msg.fromId;
+							//var fromId = data.fromUserId;
+							var time = new Date();
+							var timestr = ("0" + time.getHours()).slice(-2) + ":" +
+								("0" + time.getMinutes()).slice(-2) + ":" +
+								("0" + time.getSeconds()).slice(-2);
+
+							setChatMessageInnerHTML(fromId + "(" + timestr + "):<br/>&nbsp;&nbsp;&nbsp;" + message);
+							break;
+
+					}
 				}
-			}
-			break;
-			
-        }
+				break;
+
+		}
 	}
-	
-    //加入聊天室
-    function joinChatRoom(index){
-        traceLog("joinChatRoom:"+chatRoomList[index]);
-        selectRoomIndex = index;
-        var div = document.getElementById('targetChatRoomId')
-		chatRoomId      = chatRoomList[selectRoomIndex].ID;
-		chatRoomName    = chatRoomList[selectRoomIndex].Name;
+
+	//加入聊天室
+	function joinChatRoom(index) {
+		traceLog("joinChatRoom:" + chatRoomList[index]);
+		selectRoomIndex = index;
+		var div = document.getElementById('targetChatRoomId')
+		chatRoomId = chatRoomList[selectRoomIndex].ID;
+		chatRoomName = chatRoomList[selectRoomIndex].Name;
 		chatRoomCreator = chatRoomList[selectRoomIndex].Creator;
-        div.innerHTML = chatRoomName;//填充
-		
+		div.innerHTML = chatRoomName;//填充
+
 		//加入
 		var innerChatRoomObj = {
-            "ID":chatRoomId,
-            "Name":chatRoomName,
-            "Creator":chatRoomCreator
-        };	
+			"ID": chatRoomId,
+			"Name": chatRoomName,
+			"Creator": chatRoomCreator
+		};
 		var starChatSDKUserData = {
-            "roomInfo":innerChatRoomObj,           
-        };	
-		
-		if(starChatSDK != null)
-		{
+			"roomInfo": innerChatRoomObj,
+		};
+
+		if (starChatSDK != null) {
 			starChatSDK.leaveRoom();
 			starChatSDK.sigDisconnect();
 			starChatSDK = null;
 		}
-		
+
 		starChatSDK = new StarRtc.StarChatSDK('open', chatInnerCallback, starChatSDKUserData);
 		starChatSDK.login(agentId, userId, authKey);
 		starChatSDK.sigConnect();
-		
-    }
-	
-	function showRoomOnlineNum(roomName, onlineNum){
-		var div = document.getElementById('targetChatRoomId')		
-        div.innerHTML = chatRoomName + "(" + onlineNum + "人在线)";//填充	
+
 	}
 
-    //打开群组聊天界面
-    function openGroup(index){
-        traceLog("openGroup:"+groupList[index]);
-        if(selectGroupIndex==index)return;
-        selectGroupIndex = index;
-        var div = document.getElementById('targetGroupId')
-        div.innerHTML = groupList[selectGroupIndex].groupName;
+	function showRoomOnlineNum(roomName, onlineNum) {
+		var div = document.getElementById('targetChatRoomId')
+		div.innerHTML = chatRoomName + "(" + onlineNum + "人在线)";//填充	
+	}
 
-        var div2 = document.getElementById('groupMessage')
-        div2.innerHTML = "";
-        div2.scrollTop = div2.scrollHeight;
-    }
-	
-	function  showAndroidQr(){
-			var evt = event || window.event;
-			var x = evt.clientX;
-			var y = evt.clientY - 300;
-			
-			document.getElementById("android_app").style.left = x + "px";
-			document.getElementById("android_app").style.top = y + "px";
-			
-			document.getElementById("android_app").style.display='block';
-			document.getElementById("android_app").style.zIndex='999';
+	//打开群组聊天界面
+	function openGroup(index) {
+		traceLog("openGroup:" + groupList[index]);
+		if (selectGroupIndex == index) return;
+		selectGroupIndex = index;
+		var div = document.getElementById('targetGroupId')
+		div.innerHTML = groupList[selectGroupIndex].groupName;
+
+		var div2 = document.getElementById('groupMessage')
+		div2.innerHTML = "";
+		div2.scrollTop = div2.scrollHeight;
 	}
-	function hideAndroidQr(){
-		document.getElementById("android_app").style.display='none';
+
+	function showAndroidQr() {
+		var evt = event || window.event;
+		var x = evt.clientX;
+		var y = evt.clientY - 300;
+
+		document.getElementById("android_app").style.left = x + "px";
+		document.getElementById("android_app").style.top = y + "px";
+
+		document.getElementById("android_app").style.display = 'block';
+		document.getElementById("android_app").style.zIndex = '999';
 	}
-	
-	function  showiOSQr(){
-			var evt = event || window.event;
-			var x = evt.clientX;
-			var y = evt.clientY - 300;
-			
-			document.getElementById("ios_app").style.left = x + "px";
-			document.getElementById("ios_app").style.top = y + "px";
-			
-			document.getElementById("ios_app").style.display='block';
-			document.getElementById("ios_app").style.zIndex='999';
+	function hideAndroidQr() {
+		document.getElementById("android_app").style.display = 'none';
 	}
-	function hideiOSQr(){
-		document.getElementById("ios_app").style.display='none';
+
+	function showiOSQr() {
+		var evt = event || window.event;
+		var x = evt.clientX;
+		var y = evt.clientY - 300;
+
+		document.getElementById("ios_app").style.left = x + "px";
+		document.getElementById("ios_app").style.top = y + "px";
+
+		document.getElementById("ios_app").style.display = 'block';
+		document.getElementById("ios_app").style.zIndex = '999';
 	}
-	
-	
-    $(function() {
-         //初始化菜单
-         $.contextMenu({
-             selector: '.content-menu',
-             callback: function(key, options) {
-                //console.log("点击了：" + key);
+	function hideiOSQr() {
+		document.getElementById("ios_app").style.display = 'none';
+	}
+
+
+	$(function () {
+		//初始化菜单
+		$.contextMenu({
+			selector: '.content-menu',
+			callback: function (key, options) {
+				//console.log("点击了：" + key);
 				var div = document.getElementById('chatRoomMessage')
 				div.innerHTML = '';
-				
+
 				var div = document.getElementById('sigleMessage')
 				div.innerHTML = '';
-				
+
 				//div.scrollTop = div.scrollHeight;
-             },
-             items: {
-                 //"edit": {name: "编辑", icon: "edit"},                
-                 "delete": {name: "清屏", icon: "delete"},
-                 
-                
-             }
-         });
-      });
-         
-   
+			},
+			items: {
+				//"edit": {name: "编辑", icon: "edit"},                
+				"delete": { name: "清屏", icon: "delete" },
+
+
+			}
+		});
+	});
+
+
 
 </script>
+
 </html>
