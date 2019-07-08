@@ -284,44 +284,22 @@ author:support@starRTC.com
 
 <script type="text/javascript">
 
+	var aecRequestBaseURL = "https://www.starrtc.com/aec";
+
+	StarRtc.Instance = new StarRtc.StarSDK();
+
 	////////////////////////共有云私有云区别搜索 StarRtc.Instance.configModePulic 查看
 
 	////////////////////////私有云改配置///////////////////////
 	///////////////////////以下10.90.7.70需替换为私有部署IP////
 
-	//StarRtc.Instance.setConfigModePulic(false);
+	var privateURL = "demo.starrtc.com";
 
-	//StarRtc.Instance.setMsgServerInfo("10.90.7.70", 19903) 					//ip, websocket port  //需要手动从浏览器输入 https://10.90.7.70:29991 信任证书
+	StarRtc.Instance.setConfigUseAEC(true);
 
-	//StarRtc.Instance.setChatRoomServerInfo("10.90.7.70", 19906) 				//ip, websocket port //需要手动从浏览器输入 https://10.90.7.70:29993 信任证书
+	StarRtc.Instance.setMsgServerInfo(privateURL, 19903) 					//ip, websocket port  //需要手动从浏览器输入 https://10.90.7.70:29991 信任证书
 
-	//StarRtc.Instance.setSrcServerInfo("10.90.7.70", 19934, 19935)  			//ip, websocket port, webrtc port //需要手动从浏览器输入 https://10.90.7.70:29994 信任证书
-
-	//StarRtc.Instance.setVdnServerInfo("10.90.7.70", 19940, 19941) 			//ip, websocket port, webrtc port //需要手动从浏览器输入 https://10.90.7.70:29995 信任证书
-
-	//StarRtc.Instance.setVoipServerInfo("10.90.7.70", 10086, 10087, 10088) 	//ip, voipServer port, websocket port, webrtc port //需要手动从浏览器输入 https://10.90.7.70:29992 信任证书
-
-	//StarRtc.Instance.setWebrtcServerIP("10.90.7.70");
-
-	////////////////////////公有云改配置///////////////////////
-
-	//StarRtc.Instance.setConfigModePulic(true);
-
-	//StarRtc.Instance.setLoginServerUrl("ips2.starrtc.com");
-
-	//StarRtc.Instance.setMsgScheduleUrl("ips2.starrtc.com");
-
-	//StarRtc.Instance.setChatRoomScheduleUrl("ips2.starrtc.com");
-
-	//StarRtc.Instance.setSrcScheduleUrl("ips2.starrtc.com");
-
-	//StarRtc.Instance.setVdnScheduleUrl("ips2.starrtc.com");
-
-	//StarRtc.Instance.setVoipServerUrl("ips2.starrtc.com");
-
-	//StarRtc.Instance.setWorkServerUrl("https://api.starrtc.com/public");
-
-	//StarRtc.Instance.setWebrtcServerIP("192.168.0.1");
+	StarRtc.Instance.setChatRoomServerInfo(privateURL, 19906) 				//ip, websocket port //需要手动从浏览器输入 https://10.90.7.70:29993 信任证书
 
 
 	// 集成文档请参考 https://docs.starrtc.com/docs/h5-1.html
@@ -339,10 +317,8 @@ author:support@starRTC.com
 		nav.style.left = '-110px';
 	}, false)
 
-	//showSingle();
-	var agentId = "stargWeHN8Y7";
+	var agentId = "";
 	var userId = "";
-	var authKey = "";
 	var starChatSDK = null;
 	showChatRoom();
 
@@ -413,7 +389,7 @@ author:support@starRTC.com
 				for (var i = 0; i < groupList.length; i++) {
 					var item = groupList[i];
 					document.getElementById('groupList').innerHTML +=
-						"<div class='button2' onclick='openGroup(" + i + ")'>" + item.groupName + "</div>";
+						"<div class='button2' onclick='openGroup(" + i + ")'>" + item.name + "</div>";
 				}
 				break;
 			case "onGetOnlineNumber":
@@ -428,41 +404,19 @@ author:support@starRTC.com
 
 	function newLogin() {
 		userId = "" + (Math.floor(Math.random() * 900000 + 100000));
-		if (StarRtc.Instance.configModePulic) {
-			$.get("https://api.starrtc.com/public/authKey?userid=" + userId + "&appid=" + agentId, function (data, status) {
-				traceLog("authKey 返回：" + status + "||" + data);
-				if (status === "success") {
-					var obj = JSON.parse(data);
-					if (obj.status == 1) {
-						document.getElementById('userName').innerHTML += userId;
-						authKey = obj.data;
-						setCookie("starrtc_userId", userId, null);
-						setCookie("starrtc_authKey", authKey, null);
-						StarRtc.Instance.version();
-						StarRtc.Instance.login(agentId, userId, authKey, callBack);
-					}
-				} else {
-					document.getElementById('userName').innerHTML += "登录失败";
-				}
-			});
-		}
-		else {
-			setCookie("starrtc_userId", userId, null);
-			document.getElementById('userName').innerHTML += userId;
-			authKey = "";
-			StarRtc.Instance.version();
-			StarRtc.Instance.login(agentId, userId, authKey, callBack);
-		}
+
+		setCookie("starrtc_userId", userId, null);
+		document.getElementById('userName').innerHTML += userId;
+		StarRtc.Instance.version();
+		StarRtc.Instance.login(agentId, userId, callBack);
 	}
 
 	var localId = getCookie("starrtc_userId");
-	var localAuthKey = getCookie("starrtc_authKey");
-	if (localId != "" && (localAuthKey != "" || (!StarRtc.Instance.configModePulic))) {
+	if (localId != "") {
 		userId = localId;
-		authKey = localAuthKey;
 		document.getElementById('userName').innerHTML += userId;
 		StarRtc.Instance.version();
-		StarRtc.Instance.login(agentId, userId, authKey, callBack);
+		StarRtc.Instance.login(agentId, userId, callBack);
 	} else {
 		newLogin();
 	}
@@ -475,17 +429,18 @@ author:support@starRTC.com
 	//获取聊天室列表
 	function getChatRoomList() {
 		$("#roomList").children(".button2").remove();
-		if (StarRtc.Instance.configModePulic) {
-			$.get("https://api.starrtc.com/public/chat/list.php?appid=" + agentId, function (data, status) {
+		if (StarRtc.Instance.starConfig.configUseAEC) {
+			$.get(aecRequestBaseURL + "/list/query.php?listTypes=" + CHATROOM_LIST_TYPE.CHATROOM_LIST_TYPE_CHATROOM.toString(), function (data, status) {
 				traceLog("chatList 返回：" + status + "||" + data);
 				if (status === "success") {
 					var obj = JSON.parse(data);
 					if (obj.status == 1) {
-						chatRoomList = obj.data;
-						for (var i = 0; i < chatRoomList.length; i++) {
-							var item = chatRoomList[i];
+						chatRoomList = [];
+						for (var i = 0; i < obj.data.length; i++) {
+							var item = JSON.parse(decodeURIComponent(obj.data[i].data));
+							chatRoomList.push(item);
 							document.getElementById('roomList').innerHTML +=
-								"<div class='button2' onclick='joinChatRoom(" + i + ")'>" + item.Name + "</div>";
+								"<div class='button2' onclick='joinChatRoom(" + i + ")'>" + item.name + "</div>";
 						}
 					} else {
 						document.getElementById('roomList').innerHTML += "获取失败";
@@ -496,12 +451,13 @@ author:support@starRTC.com
 			});
 		}
 		else {
+			//仅供测试
 			StarRtc.Instance.queryChatRoom(function (status, listData) {
 				chatRoomList = listData;
 				for (var i = 0; i < chatRoomList.length; i++) {
 					var item = chatRoomList[i];
 					document.getElementById('roomList').innerHTML +=
-						"<div class='button2' onclick='joinChatRoom(" + i + ")'>" + item.Name + "</div>";
+						"<div class='button2' onclick='joinChatRoom(" + i + ")'>" + item.name + "</div>";
 				}
 			});
 		}
@@ -510,17 +466,18 @@ author:support@starRTC.com
 	function getGroupList() {
 		//获取群组列表
 		$("#groupList").children(".button2").remove();
-		if (StarRtc.Instance.configModePulic) {
-			$.get("https://api.starrtc.com/public/group/list_all.php" + "?userid=" + userId + "&appid=" + agentId, function (data, status) {
+		if (StarRtc.Instance.starConfig.configUseAEC) {
+			$.get(aecRequestBaseURL + "/group/list.php?userId=" + StarRtc.Instance.starUser.userId, function (data, status) {
 				traceLog("groupList 返回：" + status + "||" + data);
 				if (status === "success") {
 					var obj = JSON.parse(data);
 					if (obj.status == 1) {
-						groupList = obj.data;
-						for (var i = 0; i < groupList.length; i++) {
-							var item = groupList[i];
+						groupList = [];
+						for (var i = 0; i < obj.data.length; i++) {
+							var item = JSON.parse(decodeURIComponent(obj.data[i].data));
+							groupList.push(item);
 							document.getElementById('groupList').innerHTML +=
-								"<div class='button2' onclick='openGroup(" + i + ")'>" + item.groupName + "</div>";
+								"<div class='button2' onclick='openGroup(" + i + ")'>" + item.name + "</div>";
 						}
 					} else {
 						// document.getElementById('groupList').innerHTML += "获取失败";
@@ -531,6 +488,7 @@ author:support@starRTC.com
 			});
 		}
 		else {
+			//仅供测试
 			StarRtc.Instance.getGroupList();
 		}
 	}
@@ -561,7 +519,7 @@ author:support@starRTC.com
 			alert("对方ID不能为空");
 			return;
 		}
-		var targetGroupId = groupList[selectGroupIndex].groupId;
+		var targetGroupId = groupList[selectGroupIndex].id;
 		var message = document.getElementById('groupText').value;
 
 		setGroupMessageInnerHTML(targetGroupId, userId + ":<br/>&nbsp;&nbsp;&nbsp;" + message);
@@ -617,7 +575,7 @@ author:support@starRTC.com
 	}
 	//将消息显示在网页上
 	function setGroupMessageInnerHTML(groupId, innerHTML) {
-		if (selectGroupIndex != undefined && groupId == groupList[selectGroupIndex].groupId) {
+		if (selectGroupIndex != undefined && groupId == groupList[selectGroupIndex].id) {
 			var div = document.getElementById('groupMessage')
 			div.innerHTML += innerHTML + '<br/><br/>';
 			div.scrollTop = div.scrollHeight;
@@ -699,8 +657,8 @@ author:support@starRTC.com
 							break;
 						case "getRoomOnlineNum":
 							//alert(data.onlineNum);					
-							//alert(data.userData.roomInfo.Name);	
-							showRoomOnlineNum(data.userData.roomInfo.Name, data.onlineNum);
+							//alert(data.userData.roomInfo.name);	
+							showRoomOnlineNum(data.userData.roomInfo.name, data.onlineNum);
 							break;
 						case "recvChatPrivateMsg":
 						//收到聊天室私聊消息
@@ -744,16 +702,16 @@ author:support@starRTC.com
 		traceLog("joinChatRoom:" + chatRoomList[index]);
 		selectRoomIndex = index;
 		var div = document.getElementById('targetChatRoomId')
-		chatRoomId = chatRoomList[selectRoomIndex].ID;
-		chatRoomName = chatRoomList[selectRoomIndex].Name;
-		chatRoomCreator = chatRoomList[selectRoomIndex].Creator;
+		chatRoomId = chatRoomList[selectRoomIndex].id;
+		chatRoomName = chatRoomList[selectRoomIndex].name;
+		chatRoomCreator = chatRoomList[selectRoomIndex].creator;
 		div.innerHTML = chatRoomName;//填充
 
 		//加入
 		var innerChatRoomObj = {
-			"ID": chatRoomId,
-			"Name": chatRoomName,
-			"Creator": chatRoomCreator
+			"id": chatRoomId,
+			"name": chatRoomName,
+			"creator": chatRoomCreator
 		};
 		var starChatSDKUserData = {
 			"roomInfo": innerChatRoomObj,
@@ -765,8 +723,7 @@ author:support@starRTC.com
 			starChatSDK = null;
 		}
 
-		starChatSDK = new StarRtc.StarChatSDK('open', chatInnerCallback, starChatSDKUserData);
-		starChatSDK.login(agentId, userId, authKey);
+		starChatSDK = new StarRtc.Instance.getChatRoomSDK('open', chatInnerCallback, starChatSDKUserData);
 		starChatSDK.sigConnect();
 
 	}
@@ -782,7 +739,7 @@ author:support@starRTC.com
 		if (selectGroupIndex == index) return;
 		selectGroupIndex = index;
 		var div = document.getElementById('targetGroupId')
-		div.innerHTML = groupList[selectGroupIndex].groupName;
+		div.innerHTML = groupList[selectGroupIndex].name;
 
 		var div2 = document.getElementById('groupMessage')
 		div2.innerHTML = "";
