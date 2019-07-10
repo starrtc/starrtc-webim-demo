@@ -152,6 +152,7 @@ author:support@starRTC.com
 		}
 	</style>
 	<link rel="stylesheet" href="jquery.contextMenu.min.css">
+	<link rel="stylesheet" type="text/css" href="jquery-ui.min.css">
 </head>
 
 <body>
@@ -191,6 +192,30 @@ author:support@starRTC.com
 
 			<!--群组-->
 			<div id="groupView" style="width: 100%;height: 100%;visibility: visible; background-color:#b6cdc9">
+				<div id="groupCreateDlg" title="创建群组">
+					<p class="validateTips">请输入群组名称.</p>
+					<div>
+						<input type="text" name="newGroupName" id="newGroupName" value=""
+							class="text ui-widget-content ui-corner-all">
+					</div>
+					<p class="validateTips">请输入添加成员id（多个以,隔开）.</p>
+					<div>
+						<input type="text" name="newGroupMembers" id="newGroupMembers" value=""
+							class="text ui-widget-content ui-corner-all">
+					</div>
+				</div>
+				<div id="groupMembersDlg" title="群组成员">
+					<div id="addMembers">
+						<p class="validateTips">请输入添加成员id（多个以,隔开）.</p>
+						<input type="text" name="newGroupMembers2" id="newGroupMembers2" value=""
+							class="text ui-widget-content ui-corner-all">
+						<div id="addGroupMembers">添加</div>
+					</div>
+					<p class="validateTips">成员列表.</p>
+					<div id="groupMemberList" style="overflow-y: scroll;height:400px;">
+
+					</div>
+				</div>
 				<div id="groupList"
 					style="position: absolute; width: 100px ;top: 0; left:0; bottom: 0; background-color:beige; overflow: auto;text-align: center">
 					<br />群列表<br /><br />
@@ -203,17 +228,28 @@ author:support@starRTC.com
 				</div>
 				<div style="position: absolute; left: 100px; right: 0; bottom: 0; height: 50px; background-color: white;"
 					id="groupEdit">
-					<div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
+					<div style="position: absolute;  height: 50px;left: 0; right: 330px; bottom: 0;">
 						<input id="groupText" type="text"
 							style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
 					</div>
-					<div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  "
-						onclick="sendGroupChat ()">发送</div>
+					<div style="float:right; width:100px; height:48px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;border:1px solid black;"
+						onclick="showGroupMember()">成员</div>
+					<div style="float:right; width:100px; height:48px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;border:1px solid black;"
+						onclick="createNewGroup()">创建</div>
+					<div style="float:right; width:100px; height:48px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;border:1px solid black;  "
+						onclick="sendGroupChat()">发送</div>
 				</div>
 			</div>
 
 			<!--聊天室-->
 			<div id="chatRoomView" style="width: 100%;height: 100%;visibility: visible; background-color: beige">
+				<div id="chatRoomCreateDlg" title="创建聊天室">
+					<p class="validateTips">请输入聊天室名称.</p>
+					<div>
+						<input type="text" name="newChatRoomName" id="newChatRoomName" value=""
+							class="text ui-widget-content ui-corner-all">
+					</div>
+				</div>
 				<div id="roomList"
 					style="position: absolute; width: 100px ;top: 0; left:0; bottom: 0; background-color:beige; overflow: auto;text-align: center">
 					<br />聊天室列表<br /><br />
@@ -229,11 +265,13 @@ author:support@starRTC.com
 
 				<div id="chatRoomedit"
 					style="position: absolute; left: 100px; right: 0; bottom: 0; height: 50px; background-color: white;">
-					<div style="position: absolute;  height: 50px;left: 0; right: 100px; bottom: 0;">
+					<div style="position: absolute;  height: 50px;left: 0; right: 220px; bottom: 0;">
 						<input id="chatRoomText" type="text" onkeydown="chatkeydown()"
 							style="width: 100%;height: 100%;background: whitesmoke;padding-left: 10px;border-width: 0" />
 					</div>
-					<div style="float:right; width:100px; height:50px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;  "
+					<div style="float:right; width:100px; height:48px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;border:1px solid black;"
+						onclick="createNewChat()">创建</div>
+					<div style="float:right; width:100px; height:48px; background-color: lightgrey ;text-align: center; line-height:50px; cursor:pointer;;border:1px solid black;"
 						onclick="sendChatMsg()">发送</div>
 				</div>
 			</div>
@@ -275,8 +313,9 @@ author:support@starRTC.com
 
 </body>
 
-<script type="text/javascript" src="star_rtc_lib.min.js"></script>
+<script type="text/javascript" src="star_rtc_lib.js"></script>
 <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="jquery-ui.min.js"></script>
 <script type="text/javascript" src="cookie_tools.js"></script>
 <script type="text/javascript" src="jquery.contextMenu.min.js"></script>
 <script type="text/javascript" src="jquery.ui.position.min.js"></script>
@@ -284,7 +323,7 @@ author:support@starRTC.com
 
 <script type="text/javascript">
 
-	var aecRequestBaseURL = "https://www.starrtc.com/aec";
+	var aecRequestBaseURL = "https://www.starrtc.com/aec";         			//开启AEC后，才生效，从此url获取各种列表信息
 
 	StarRtc.Instance = new StarRtc.StarSDK();
 
@@ -295,14 +334,14 @@ author:support@starRTC.com
 
 	var privateURL = "demo.starrtc.com";
 
-	StarRtc.Instance.setConfigUseAEC(true);
+	StarRtc.Instance.setConfigUseAEC(true);									//是否开启AEC
 
 	StarRtc.Instance.setMsgServerInfo(privateURL, 19903) 					//ip, websocket port  //需要手动从浏览器输入 https://10.90.7.70:29991 信任证书
 
 	StarRtc.Instance.setChatRoomServerInfo(privateURL, 19906) 				//ip, websocket port //需要手动从浏览器输入 https://10.90.7.70:29993 信任证书
 
 
-	// 集成文档请参考 https://docs.starrtc.com/docs/h5-1.html
+	// 集成文档请参考 https://docs.starrtc.com/en/docs/web-4.html
 	btn = document.getElementsByClassName('avatar-small')[0];
 	mask = document.getElementsByClassName('mask')[0];
 	nav = document.getElementsByClassName('nav')[0];
@@ -320,6 +359,9 @@ author:support@starRTC.com
 	var agentId = "";
 	var userId = "";
 	var starChatSDK = null;
+	var chatRoomCreateDialog = null;
+	var groupCreateDialog = null;
+	var groupMembersDialog = null;
 	showChatRoom();
 
 	var callBack = function (data, status) {
@@ -389,15 +431,34 @@ author:support@starRTC.com
 				for (var i = 0; i < groupList.length; i++) {
 					var item = groupList[i];
 					document.getElementById('groupList').innerHTML +=
-						"<div class='button2' onclick='openGroup(" + i + ")'>" + item.name + "</div>";
+						"<div class='button2' onclick='openGroup(" + i + ")'>" + item.groupName + "</div>";
 				}
 				break;
 			case "onGetOnlineNumber":
 				//console.log("在线人数：" + data.count)
 				break;
 			case "onGetGroupUserList":
+				if (data.success) {
+					var list = $("#groupMemberList");
+					list.html("");
+					for (var i in userIdList) {
+						list[0].innerHTML += "<div class=''>" + userIdList[i] + "</div>";
+					}
+					groupMembersDialog.dialog("open");
+				}
 				break;
 			case "onGetAllUserList":
+				break;
+			case "onCreateGroupFin":
+				if (data.status == "success") {
+					getGroupList();
+				}
+				groupCreateDialog.dialog("close");
+				alert("创建群组" + data.status);
+				break;
+			case "onAddGroupUserFin":
+				groupMembersDialog.dialog("close");
+				alert("添加成员" + data.status);
 				break;
 		}
 	};
@@ -452,7 +513,7 @@ author:support@starRTC.com
 		}
 		else {
 			//仅供测试
-			StarRtc.Instance.queryChatRoom(function (status, listData) {
+			StarRtc.Instance.queryRoom([CHATROOM_LIST_TYPE.CHATROOM_LIST_TYPE_CHATROOM], function (status, listData) {
 				chatRoomList = listData;
 				for (var i = 0; i < chatRoomList.length; i++) {
 					var item = chatRoomList[i];
@@ -474,10 +535,10 @@ author:support@starRTC.com
 					if (obj.status == 1) {
 						groupList = [];
 						for (var i = 0; i < obj.data.length; i++) {
-							var item = JSON.parse(decodeURIComponent(obj.data[i].data));
+							var item = obj.data[i];
 							groupList.push(item);
 							document.getElementById('groupList').innerHTML +=
-								"<div class='button2' onclick='openGroup(" + i + ")'>" + item.name + "</div>";
+								"<div class='button2' onclick='openGroup(" + i + ")'>" + item.groupName + "</div>";
 						}
 					} else {
 						// document.getElementById('groupList').innerHTML += "获取失败";
@@ -519,11 +580,14 @@ author:support@starRTC.com
 			alert("对方ID不能为空");
 			return;
 		}
-		var targetGroupId = groupList[selectGroupIndex].id;
+		var targetGroupId = groupList[selectGroupIndex].groupId;
 		var message = document.getElementById('groupText').value;
 
 		setGroupMessageInnerHTML(targetGroupId, userId + ":<br/>&nbsp;&nbsp;&nbsp;" + message);
 		StarRtc.Instance.sendGroupMsg(targetGroupId, "新消息", message);
+
+		//清空输入框		
+		$("#groupText").val('');
 	}
 
 	function chatkeydown() {
@@ -537,6 +601,72 @@ author:support@starRTC.com
 			sendSingleChat();
 
 		}
+	}
+
+	function createNewGroup() {
+		$("#newGroupName").val("网页群组");
+		$("#newGroupMembers").val("");
+		groupCreateDialog.dialog("open");
+	}
+
+	function newGroup() {
+		var newGroupName = $("#newGroupName").val().trim();
+		if (newGroupName == "") {
+			alert("聊天室名称不能为空！");
+			return;
+		}
+
+		var newGroupMembers = $("#newGroupMembers").val().trim().split(",");
+
+		StarRtc.Instance.createGroup(newGroupMembers, newGroupName);
+	}
+
+	function showGroupMember() {
+		if (selectGroupIndex == undefined) {
+			alert("群组ID不能为空");
+			return;
+		}
+		if (groupList[selectGroupIndex].creator == StarRtc.Instance.starUser.userId) {
+			$("#newGroupMembers2").val('');
+			$("#addMembers").show();
+		}
+		else {
+			$("#addMembers").hide();
+		}
+		var targetGroupId = groupList[selectGroupIndex].groupId;
+		if (StarRtc.Instance.starConfig.configUseAEC) {
+			$.get(aecRequestBaseURL + "/group/members.php?userId=" + StarRtc.Instance.starConfig.userId + "&groupId=" + targetGroupId, function (data, status) {
+				if (status === "success") {
+					var obj = JSON.parse(data);
+					if (obj.status == 1) {
+						var list = $("#groupMemberList");
+						list.html("");
+						var userIdList = obj.data.userIdList.split(",");
+						for (var i = 0; i < userIdList.length; i++) {
+							list[0].innerHTML += "<div class=''>" + userIdList[i] + "</div>";
+						}
+						groupMembersDialog.dialog("open");
+					} else {
+						document.getElementById('roomList').innerHTML += "获取失败";
+					}
+				} else {
+					document.getElementById('roomList').innerHTML += "获取失败";
+				}
+			});
+		}
+		else {
+			StarRtc.Instance.getGroupUserList(targetGroupId);
+		}
+	}
+
+	function addGroupMembers() {
+		if (selectGroupIndex == undefined) {
+			alert("群组ID不能为空");
+			return;
+		}
+		if (groupList[selectGroupIndex].creator != StarRtc.Instance.starUser.userId) return;
+		var newGroupMembers = $("#newGroupMembers2").val().trim().split(",");
+		StarRtc.Instance.addGroupUsers(groupList[selectGroupIndex].groupId, newGroupMembers);
 	}
 
 	//发送聊天室消息
@@ -562,6 +692,10 @@ author:support@starRTC.com
 		$("#chatRoomText").val('');
 	}
 
+	function createNewChat() {
+		$("#newChatRoomName").val("网页聊天室");
+		chatRoomCreateDialog.dialog("open");
+	}
 	//关闭
 	function closeWebSocket() {
 		StarRtc.Instance.logout();
@@ -575,7 +709,7 @@ author:support@starRTC.com
 	}
 	//将消息显示在网页上
 	function setGroupMessageInnerHTML(groupId, innerHTML) {
-		if (selectGroupIndex != undefined && groupId == groupList[selectGroupIndex].id) {
+		if (selectGroupIndex != undefined && groupId == groupList[selectGroupIndex].groupId) {
 			var div = document.getElementById('groupMessage')
 			div.innerHTML += innerHTML + '<br/><br/>';
 			div.scrollTop = div.scrollHeight;
@@ -621,12 +755,19 @@ author:support@starRTC.com
 		getGroupList();
 	}
 
-	var chatInnerCallback = function (data, status) {
+	var chatInnerCallback = function (data, status, oper) {
 		var thisRoom = data.obj;
 		switch (status) {
 			case "connect success":
-				//alert('starChatSDK connect success');
-				thisRoom.joinRoom();
+				switch (oper) {
+					case "open":
+						thisRoom.joinRoom();
+						break;
+					case "new":
+						thisRoom.createNew();
+						break;
+				}
+
 
 				break;
 			case "connect failed":
@@ -644,6 +785,36 @@ author:support@starRTC.com
 						case "createChatRoom":
 							//创建聊天室
 							//data.status == "success"为成功，data.chatroomId为聊天室Id
+							if (data.status == "success") {
+								if (StarRtc.Instance.starConfig.configUseAEC) {
+									$.get(aecRequestBaseURL + "/list/save.php?userId=" + StarRtc.Instance.starUser.userId + "&listType=" + CHATROOM_LIST_TYPE.CHATROOM_LIST_TYPE_CHATROOM.toString() + "&roomId=" + data.userData.roomInfo.id + "&data=" + encodeURIComponent(JSON.stringify(data.userData.roomInfo)), function (data, status) {
+										if (status === "success") {
+											var obj = JSON.parse(data);
+											if (obj.status == 1) {
+												console.log("创建成功")
+											} else {
+												console.log("创建失败")
+											}
+										} else {
+											console.log("创建失败")
+										}
+									});
+								}
+								else {
+									//仅供测试使用
+									StarRtc.Instance.reportRoom(CHATROOM_LIST_TYPE.CHATROOM_LIST_TYPE_SUPER_ROOM.toString(), data.userData.roomInfo, function (status) {
+										qalert('创建' + status);
+										console.log("创建" + status);
+									});
+								}
+								chatRoomCreateDialog.dialog("close");
+								getChatRoomList();
+								var div = document.getElementById('targetChatRoomId');
+								div.innerHTML = data.userData.roomInfo.name;
+							}
+							else {
+								alert('创建失败');
+							}
 							break;
 						case "deleteChatRoom":
 							//删除聊天室
@@ -701,7 +872,7 @@ author:support@starRTC.com
 	function joinChatRoom(index) {
 		traceLog("joinChatRoom:" + chatRoomList[index]);
 		selectRoomIndex = index;
-		var div = document.getElementById('targetChatRoomId')
+		var div = document.getElementById('targetChatRoomId');
 		chatRoomId = chatRoomList[selectRoomIndex].id;
 		chatRoomName = chatRoomList[selectRoomIndex].name;
 		chatRoomCreator = chatRoomList[selectRoomIndex].creator;
@@ -728,9 +899,35 @@ author:support@starRTC.com
 
 	}
 
+	function newChatRoom() {
+		var chatRoomName = $("#newChatRoomName").val().trim();
+		if (chatRoomName == "") {
+			alert("聊天室名称不能为空！");
+			return;
+		}
+		//加入
+		var innerChatRoomObj = {
+			"id": "",
+			"name": chatRoomName,
+			"creator": ""
+		};
+		var starChatSDKUserData = {
+			"roomInfo": innerChatRoomObj,
+		};
+
+		if (starChatSDK != null) {
+			starChatSDK.leaveRoom();
+			starChatSDK.sigDisconnect();
+			starChatSDK = null;
+		}
+
+		starChatSDK = new StarRtc.Instance.getChatRoomSDK('new', chatInnerCallback, starChatSDKUserData);
+		starChatSDK.sigConnect();
+	}
+
 	function showRoomOnlineNum(roomName, onlineNum) {
 		var div = document.getElementById('targetChatRoomId')
-		div.innerHTML = chatRoomName + "(" + onlineNum + "人在线)";//填充	
+		div.innerHTML = roomName + "(" + onlineNum + "人在线)";//填充	
 	}
 
 	//打开群组聊天界面
@@ -739,7 +936,7 @@ author:support@starRTC.com
 		if (selectGroupIndex == index) return;
 		selectGroupIndex = index;
 		var div = document.getElementById('targetGroupId')
-		div.innerHTML = groupList[selectGroupIndex].name;
+		div.innerHTML = groupList[selectGroupIndex].groupName;
 
 		var div2 = document.getElementById('groupMessage')
 		div2.innerHTML = "";
@@ -797,6 +994,53 @@ author:support@starRTC.com
 
 
 			}
+		});
+
+		chatRoomCreateDialog = $("#chatRoomCreateDlg").dialog({
+			autoOpen: false,
+			height: 300,
+			width: 350,
+			modal: true,
+			buttons: {
+				"创建": newChatRoom,
+				"取消": function () {
+					chatRoomCreateDialog.dialog("close");
+				}
+			},
+		});
+
+		groupCreateDialog = $("#groupCreateDlg").dialog({
+			autoOpen: false,
+			height: 300,
+			width: 350,
+			modal: true,
+			buttons: {
+				"创建": newGroup,
+				"取消": function () {
+					groupCreateDialog.dialog("close");
+				}
+			},
+		});
+
+		groupMembersDialog = $("#groupMembersDlg").dialog({
+			autoOpen: false,
+			height: 800,
+			width: 400,
+			modal: true,
+			buttons: {
+				"确定": function () {
+					videoLiveCanvasDlg.dialog("close");
+				},
+				"确定": function () {
+					groupMembersDialog.dialog("close");
+				}
+			},
+		});
+
+		$("#addGroupMembers").button();
+		$("#addGroupMembers").bind("click", function (
+		) {
+			addGroupMembers();
 		});
 	});
 
