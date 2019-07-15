@@ -438,11 +438,11 @@ author:support@starRTC.com
 				//console.log("在线人数：" + data.count)
 				break;
 			case "onGetGroupUserList":
-				if (data.success) {
+				if (data.status) {
 					var list = $("#groupMemberList");
 					list.html("");
-					for (var i in userIdList) {
-						list[0].innerHTML += "<div class=''>" + userIdList[i] + "</div>";
+					for (var i in data.userIdList) {
+						list[0].innerHTML += "<div class=''>" + data.userIdList[i] + "</div>";
 					}
 					groupMembersDialog.dialog("open");
 				}
