@@ -618,7 +618,7 @@ author:support@starRTC.com
 
 		var newGroupMembers = $("#newGroupMembers").val().trim().split(",");
 
-		StarRtc.Instance.createGroup(newGroupMembers, newGroupName);
+		reqIndex = StarRtc.Instance.createGroup(newGroupMembers, newGroupName);
 	}
 
 	function showGroupMember() {
